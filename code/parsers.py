@@ -37,6 +37,8 @@ class TSP():
             for k in spec_keys:
                 if k in line:
                     arg = line.split(':')[-1][1:] #get last after : char and strip the first char, a space
+                    if arg.isdigit():
+                        arg = int(arg)
                     self.spec[k.lower()] = arg
                     
         self.spec = argparse.Namespace(**self.spec)
@@ -72,7 +74,7 @@ class TSP():
                 if self.spec.edge_weight_type == "EUC_2D":
                     for n in nodes:
                         num, x, y = n.split()
-                        x, y = float(x), float(y)
+                        num, x, y = int(num), float(x), float(y)
                         self.graph.add_node(num, attr_dict={"x":x, "y":y})
                         for other_node in self.graph.nodes():
                             attrs = self.graph.node[other_node]
