@@ -1,6 +1,7 @@
 import networkx as nx
 import numpy as np
-import pandas as pd
+
+import random
 
 def simple_greed(p, n):
     """Takes p and produces a tour from a start node n by choosing
@@ -36,3 +37,26 @@ def simple_greed(p, n):
         current_node = closest_node
     return (cost, ts)
         
+def random_choice(p, n):
+    """Takes p and produces a tour from a start node by choosing
+    a random unvisited neighbor node
+        
+    p :: [TSP object]
+    n :: [Integer] Start node
+    
+    returns: tour of p
+    """
+    seen = set()
+    current_node = n
+    seen.add(current_node)
+    p_nodes = set(p.graph.nodes())
+    
+    cost = 0
+    
+    while p_nodes.difference(seen):
+        unseen_neighbors = [n for n in p.graph.neighbors(current_node) if n not in seen]
+        next_node = random.choice(unseen_neighbors)
+        cost += p.graph.get_edge_data(current_node, next_node)['weight']
+        seen.add(next_node)
+        current_node = next_node
+    return cost
