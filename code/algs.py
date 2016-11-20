@@ -1,5 +1,6 @@
 import networkx as nx
 import numpy as np
+import pandas as pd
 
 def simple_greed(p, n):
     """Takes p and produces a tour from a start node n by choosing
@@ -16,6 +17,7 @@ def simple_greed(p, n):
     p_nodes = set(p.graph.nodes())
     
     cost = 0
+    ts = pd.DataFrame(columns=["$N$", "current_cost", "nodes_touched", "nodes_remaining"])
 
     while p_nodes.difference(seen):
         unseen_neighbors = [n for n in p.graph.neighbors(current_node) if n not in seen]
@@ -23,5 +25,14 @@ def simple_greed(p, n):
         closest_node = near_nodes[0]
         cost += p.graph.get_edge_data(current_node, closest_node)['weight']
         seen.add(closest_node)
-    return cost
+        
+        ts = ts.append({"$N$" : n,
+                   "progress" : len(seen)/len(p_nodes),
+                   "current_cost": cost, 
+                   "nodes_touched" : seen,
+                   "nodes_remaining" : p_nodes.difference(seen)},
+                  ignore_index = True)
+               
+        current_node = closest_node
+    return (cost, ts)
         
