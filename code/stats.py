@@ -3,7 +3,7 @@ from algs import simple_greed
 
 import matplotlib.pyplot as plt
 import seaborn as sns
-from ggplot import ggplot, aes, geom_point, geom_hline, ggtitle, theme_538, geom_line
+from ggplot import ggplot, aes, geom_point, geom_hline, ggtitle, geom_line
 
 import pandas as pd
 import numpy as np
