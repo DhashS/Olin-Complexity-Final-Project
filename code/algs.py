@@ -8,7 +8,7 @@ def simple_greed(p, n, perf=False):
     """Takes p and produces a tour from a start node n by choosing
     the node with the lowest weight that it hasn't already visited.
     
-    p :: [TSP object]
+    p :: [TSP-problem networkx graph]
     n :: [Integer] Start node
     
     returns: tour of p
@@ -17,25 +17,25 @@ def simple_greed(p, n, perf=False):
     seen = set()
     current_node = n
     seen.add(current_node)
-    p_nodes = set(p.graph.nodes())
+    p_nodes = set(p.nodes())
     
     if not perf:
         cost_data = pd.DataFrame(columns=["$N$", "cost"])
-        ts_data = pd.DataFrame(columns=["$N$", "current_cost", "nodes_touched", "nodes_remaining"])
+        ts_data = pd.DataFrame(columns=["$N$", "progress", "current_cost", "nodes_touched", "nodes_remaining"])
     
     cost = 0
 
     while p_nodes.difference(seen):
-        unseen_neighbors = [n for n in p.graph.neighbors(current_node) if n not in seen]
-        near_nodes = sorted(unseen_neighbors, key=lambda x: p.graph.get_edge_data(current_node, x)['weight'])
+        unseen_neighbors = [n for n in p.neighbors(current_node) if n not in seen]
+        near_nodes = sorted(unseen_neighbors, key=lambda x: p.get_edge_data(current_node, x)['weight'])
         closest_node = near_nodes[0]
-        cost += p.graph.get_edge_data(current_node, closest_node)['weight']
+        cost += p.get_edge_data(current_node, closest_node)['weight']
         seen.add(closest_node)
         
         if not perf:
             ts_data = ts_data.append({"$N$" : n,
                                       "progress" : len(seen)/len(p_nodes),
-                                      "current_cost": cost, 
+                                      "current_cost": cost,
                                       "nodes_touched" : seen,
                                       "nodes_remaining" : p_nodes.difference(seen)},
                                      ignore_index = True)
@@ -63,19 +63,19 @@ def random_choice(p, n, perf=False):
     seen = set()
     current_node = n
     seen.add(current_node)
-    p_nodes = set(p.graph.nodes())
+    p_nodes = set(p.nodes())
     
     if not perf:
         cost_data = pd.DataFrame(columns=["$N$", "cost"])
-        ts_data = pd.DataFrame(columns=["$N$", "current_cost", "nodes_touched", "nodes_remaining"])
+        ts_data = pd.DataFrame(columns=["$N$", "progress", "current_cost", "nodes_touched", "nodes_remaining"])
     
     cost = 0
     
     
     while p_nodes.difference(seen):
-        unseen_neighbors = [n for n in p.graph.neighbors(current_node) if n not in seen]
+        unseen_neighbors = [n for n in p.neighbors(current_node) if n not in seen]
         next_node = random.choice(unseen_neighbors)
-        cost += p.graph.get_edge_data(current_node, next_node)['weight']
+        cost += p.get_edge_data(current_node, next_node)['weight']
         seen.add(next_node)
         
         if not perf:
