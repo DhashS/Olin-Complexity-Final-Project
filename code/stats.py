@@ -27,7 +27,7 @@ def get_stats(name="", path="../img/", data=None, plots=[]):
         tss = []
         
         for input_args in args[0]:
-            cost, ts = f(data, input_args)
+            cost, ts = f(data.graph, input_args)
             costs.append(cost)
             tss.append(ts)
     
@@ -50,7 +50,7 @@ def scatter_vis(costs, tss, path):
     geom_hline(y=costs.cost.mean(), color="grey") +\
     geom_hline(y=costs.cost.max(), color="red") +\
     geom_hline(y=costs.cost.min(), color="green") +\
-    ggtitle("Simple greedy algorithm tour performance, $N$ is starting node")
+    ggtitle(f.__name__)
     
     p.save(path+scatter_vis.__name__+".pdf")
 
