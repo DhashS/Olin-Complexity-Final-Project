@@ -95,3 +95,54 @@ def random_choice(p, n, perf=False):
         return (cost_data, ts_data)
     else:
         return cost
+    
+def brute_force_N(p, n, perf=False):
+    import itertools as it
+    #Generate all possible tours (complete graph)
+    tours = list(it.permutations(p.nodes())) #O(V!)
+    costs = []
+    
+    if not perf:
+        cost_data = pd.DataFrame(columns=["$N$", "cost"])
+    
+    #Evaluate all tours
+    for tour in tours[:n]:
+        cost = 0
+        for n1, n2 in zip(tour, tour[1:]): #O(V)
+            cost += p[n1][n2]['weight']
+        costs.append(cost)
+        
+    if not perf:
+        cost_data = cost_data.append({"$N$" : n,
+                                      "cost" : min(costs)},
+                                     ignore_index = True)
+        return (cost_data, pd.DataFrame())
+        
+    #Choose tour with lowest cost
+    return tours[np.argmin(costs)]
+
+def brute_force(p, perf=False):
+    import itertools as it
+    #Generate all possible tours (complete graph)
+    tours = list(it.permutations(p.nodes())) #O(V!)
+    costs = []
+    
+    if not perf:
+        cost_data = pd.DataFrame(columns=["$N$", "cost"])
+    
+    #Evaluate all tours
+    for tour in tours:
+        cost = 0
+        for n1, n2 in zip(tour, tour[1:]): #O(V)
+            cost += p[n1][n2]['weight']
+        costs.append(cost)
+        
+    if not perf:
+        cost_data = cost_data.append({"$N$" : len(p.nodes()),
+                                      "cost" : min(costs),
+                                      "opt_tour" : tours[np.argmin(costs)]},
+                                     ignore_index = True)
+        return (cost_data, pd.DataFrame())     
+        
+    #Choose tour with lowest cost
+    return tours[np.argmin(costs)]
