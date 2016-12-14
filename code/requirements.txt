@@ -1,0 +1,7 @@
+ipyparallel
+matplotlib
+ggplot
+pandas
+numpy
+networkx
+decorators
