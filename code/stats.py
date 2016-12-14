@@ -36,12 +36,12 @@ def get_stats(name="", path="../img/", data=None, plots=[]):
         
         #Display
         for plot in plots:
-            p = plot(costs, tss, path)
+            p = plot(costs, tss, path, f)
         
         return(costs, tss)
     return decorator(_get_stats)
 
-def scatter_vis(costs, tss, path):
+def scatter_vis(costs, tss, path, f):
     plt.figure()
     p = ggplot(costs,
        aes(x="$N$",

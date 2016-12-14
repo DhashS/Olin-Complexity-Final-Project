@@ -44,9 +44,7 @@ def get_stats(name="", path="../img/", data=None, plots=[], module_dir=None):
             cost, tss = f(data.graph, N)
             cost.to_csv(cost_tf_name, mode='a', header=False, sep='\t', index=False)
             tss.to_csv(tss_tf_name, mode='a', header=False, sep='\t', index=False)
-            del cost
-            del tss
-            return 0
+            return (cost.columns, tss.columns)
 
         costs = []
         tss = []
@@ -57,7 +55,7 @@ def get_stats(name="", path="../img/", data=None, plots=[], module_dir=None):
                 tss_tf_name = tss_tf.name
                 
                 dview.block=True
-                parwork.map(args[0])
+                df_cols = parwork.map(args[0])
                 
                 cost_tf.flush()
                 tss_tf.flush()
@@ -66,37 +64,23 @@ def get_stats(name="", path="../img/", data=None, plots=[], module_dir=None):
                 tss_tf.seek(0)
                 
                 costs = [tuple(l.split('\t')) for l in cost_tf.readlines()]
-                costs = pd.DataFrame.from_records(costs, columns=["$N$", "cost"])
+                costs = pd.DataFrame.from_records(costs, columns=df_cols[0][0])
                 costs = costs.apply(pd.to_numeric, errors='ignore').reset_index()
                 
                 
                 tss = [tuple(l.split('\t')) for l in tss_tf.readlines()]
-                tss = pd.DataFrame.from_records(tss, columns=["$N$", "progress", "current_cost", "nodes_touched", "nodes_remaining"])
+                tss = pd.DataFrame.from_records(tss, columns=df_cols[0][1])
                 tss = tss.apply(pd.to_numeric, errors='ignore').reset_index()
                 
-        
-                
-                
-                
-               
-                
 
-        
-        #res = np.array(res).T
-        #costs = res[0]
-        #tss = res[1]
-        
-        #tss = pd.concat(tss)
-        #costs = pd.concat(costs)
-        
         #Display
         for plot in plots:
-            p = plot(costs, tss, path)
+            p = plot(costs, tss, path, f)
         
         return(costs, tss)
     return decorator(_get_stats)
 
-def scatter_vis(costs, tss, path):
+def scatter_vis(costs, tss, path, f):
     plt.figure()
     p = ggplot(costs,
        aes(x="$N$",
@@ -109,22 +93,24 @@ def scatter_vis(costs, tss, path):
 
     p.save(path+scatter_vis.__name__+".pdf")
 
-def dist_across_cost(costs, tss, path):
+def dist_across_cost(costs, tss, path, f):
     plt.figure()
     p = sns.violinplot(data=costs,
                        y="cost",
                        saturation=0)
+    sns.plt.title(f.__name__)
     fig = p.get_figure()
     fig.savefig(path+dist_across_cost.__name__+".pdf")
 
     
-def cost_progress_trace(costs, tss, path):
+def cost_progress_trace(costs, tss, path, f):
     plt.figure()
     p = sns.tsplot(tss, 
                    unit="$N$",
                    time="progress",
                    value="current_cost", 
                    err_style="unit_traces")
+    sns.plt.title(f.__name__)
     fig = p.get_figure()
     fig.savefig(path+cost_progress_trace.__name__+".pdf")
   
