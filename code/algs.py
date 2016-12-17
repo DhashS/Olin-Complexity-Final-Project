@@ -192,7 +192,7 @@ def ant_colony(G, greed_start=0, n_ants=100, start_pheromone=None, step_pheromon
         
         while len(seen_nodes) < len(G.nodes()):
             
-            p_nodes = [G[current_node][n]['pheromone']/(G[current_node][n]['weight'])  for n in G.neighbors(current_node) if n not in seen_nodes] 
+            p_nodes = [G[current_node][n]['pheromone']/(G[current_node][n]['weight'])**2  for n in G.neighbors(current_node) if n not in seen_nodes] 
             next_node = np.random.choice([n for n in G.neighbors(current_node) if n not in seen_nodes], p=[p/sum(p_nodes) for p in p_nodes])
             seen_nodes.append(next_node)
             current_node = next_node
