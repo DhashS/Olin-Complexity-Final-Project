@@ -2,6 +2,7 @@ import networkx as nx
 import numpy as np
 import pandas as pd
 
+
 import random
 
 def simple_greed(p, n, perf=False):
@@ -192,7 +193,7 @@ def ant_colony(G, greed_start=0, n_ants=100, start_pheromone=None, step_pheromon
         
         while len(seen_nodes) < len(G.nodes()):
             
-            p_nodes = [G[current_node][n]['pheromone']/(G[current_node][n]['weight'])  for n in G.neighbors(current_node) if n not in seen_nodes] 
+            p_nodes = [G[current_node][n]['pheromone']/(G[current_node][n]['weight'])**2  for n in G.neighbors(current_node) if n not in seen_nodes] 
             next_node = np.random.choice([n for n in G.neighbors(current_node) if n not in seen_nodes], p=[p/sum(p_nodes) for p in p_nodes])
             seen_nodes.append(next_node)
             current_node = next_node
@@ -241,4 +242,31 @@ def ant_colony(G, greed_start=0, n_ants=100, start_pheromone=None, step_pheromon
         return cost
             
 
-    
+def minimum_perfect_matching(G):
+    G_c = G.copy()
+    from functools import reduce
+    import itertools as it
+    perfect_matchings = []
+    for match_cand in it.combinations(G.edges(), len(G)//2):
+        seen_nodes = set()
+        inset = []
+        for n_pair in match_cand:
+            a, b = n_pair
+            if a in seen_nodes or b in seen_nodes:
+                inset.append(True)
+            else:
+                seen_nodes.update(set(n_pair))
+                inset.append(False)
+      
+        if not reduce(lambda x, y: x or y, inset):
+            perfect_matchings.append(match_cand)
+            
+    costs = []
+    for match in perfect_matchings:
+        cost = 0
+        for a, b in match:
+            cost +=  G[a][b]['weight']
+        costs.append(cost)
+            
+    G_c.remove_edges_from([e for e in G.edges() if e not in list(perfect_matchings[np.argmin(costs)])])
+    return G_c

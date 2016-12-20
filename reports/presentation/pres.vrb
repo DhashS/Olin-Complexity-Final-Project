@@ -1,0 +1,14 @@
+\frametitle{Algorithm overview}
+		\framesubtitle{Brute-force}
+		\begin{block}{English explanation}
+			Consider all tours of a graph $\rightarrow$ Sum their weights $\rightarrow$ take the argmin.
+			How many tours are there of a graph? $O(n!)$
+		\end{block}
+		\begin{block}{Python}
+			\begin{semiverbatim}
+				1 def brute\_force(G):\newline
+				2     art
+			\end{semiverbatim}
+		\end{block}
+	\end{frame}
+\end{document}
